@@ -1,6 +1,6 @@
 const schema = {
   type: "object",
-  required: ["PORT"],
+  required: ["PORT", "MONGO_URL"],
   properties: {
     NODE_ENV: {
       type: "string",

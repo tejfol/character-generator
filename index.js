@@ -10,10 +10,10 @@ const fastify = Fastify({
   logger: true,
 });
 
+// Register dotenv
 fastify.register(fastifyEnv, options).ready((err) => {
   if (err) console.error(err);
 });
-
 await fastify.after();
 
 fastify.register(dbConnector);
