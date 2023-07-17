@@ -1,10 +1,8 @@
+import { ObjectId } from "@fastify/mongodb";
+
 class CharacterService {
   static async getAllCharacters(collection) {
-    const results = await collection.find().toArray();
-
-    if (results.length === 0) {
-      throw new Error("No documents found");
-    }
+    const results = (await collection.find().toArray()) || [];
 
     return { list: results };
   }
@@ -31,6 +29,16 @@ class CharacterService {
    */
   static async checkIfExists(collection, name) {
     return (await collection.findOne({ name })) ? true : false;
+  }
+
+  /**
+   * Delete a character
+   * @returns {Promise} Promise object represents the existence of a character in the database.
+   */
+  static async deleteCharacter(collection, id) {
+    return await collection.deleteOne({
+      _id: new ObjectId(id),
+    });
   }
 }
 

@@ -1,5 +1,15 @@
 <script setup>
-const { data: characters, pending } = await useFetch("http://localhost:3000/");
+const {
+  data: characters,
+  execute,
+  pending,
+} = await useFetch("http://localhost:3000/");
+
+const deleteCharacter = async (id) => {
+  await useFetch(`http://localhost:3000/character/${id}`, { method: "DELETE" });
+
+  execute();
+};
 </script>
 
 <template>
@@ -15,7 +25,7 @@ const { data: characters, pending } = await useFetch("http://localhost:3000/");
         <div>
           <img
             class="aspect-auto object-cover w-full xl:max-h-[75vh]"
-            :src="character.avatar"
+            :src="`http://localhost:3000${character.avatar}`"
             alt=""
           />
         </div>
@@ -23,6 +33,9 @@ const { data: characters, pending } = await useFetch("http://localhost:3000/");
           class="flex flex-col p-1 text-center gap-2 h-fit border h-full w-full"
         >
           <p class="font-bold">{{ character.name }}</p>
+          <button type="button" @click="deleteCharacter(character._id)">
+            Delete
+          </button>
           <!-- <p>
             <span class="font-bold">Sex:</span> {{ character.sex || "-----" }}
           </p>

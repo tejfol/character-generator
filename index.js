@@ -1,10 +1,16 @@
 import Fastify from "fastify";
 import fastifyEnv from "@fastify/env";
+import multipart from "@fastify/multipart";
 
 import router from "./router/index.js";
 
 import { options } from "./config/config.js";
 import dbConnector from "./config/db-connector.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const fastify = Fastify({
   logger: true,
@@ -16,6 +22,28 @@ fastify.register(fastifyEnv, options).ready((err) => {
 });
 await fastify.after();
 
+fastify.register(import("@fastify/static"), {
+  root: path.join(__dirname, "uploads"),
+  prefix: "/static/",
+});
+
+fastify.register(import("@fastify/cors"), (instance) => {
+  return (req, callback) => {
+    const corsOptions = {
+      // This is NOT recommended for production as it enables reflection exploits
+      origin: true,
+    };
+
+    // do not include CORS headers for requests from localhost
+    if (/^localhost$/m.test(req.headers.origin)) {
+      corsOptions.origin = false;
+    }
+
+    // callback expects two parameters: error and options
+    callback(null, corsOptions);
+  };
+});
+fastify.register(multipart, { attachFieldsToBody: true });
 fastify.register(dbConnector);
 fastify.register(router);
 
