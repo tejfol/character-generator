@@ -1,6 +1,5 @@
 import Fastify from "fastify";
 import fastifyEnv from "@fastify/env";
-import multipart from "@fastify/multipart";
 
 import router from "./router/index.js";
 
@@ -43,7 +42,13 @@ fastify.register(import("@fastify/cors"), (instance) => {
     callback(null, corsOptions);
   };
 });
-fastify.register(multipart, { attachFieldsToBody: true });
+fastify.register(import("@fastify/multipart"), {
+  attachFieldsToBody: true,
+  limits: {
+    fieldNameSize: 100, // Max field name size in bytes
+    fileSize: 1000000, // For multipart forms, the max file size in bytes
+  },
+});
 fastify.register(dbConnector);
 fastify.register(router);
 

@@ -19,9 +19,8 @@ async function routes(fastify, options) {
    *
    */
   fastify.post("/create", async (req, res) => {
-    // const character = await req.file();
-    const { avatar, name, sex, realm, type, personality, motto } = req.body;
-    console.log(req.body);
+    const { name, sex, realm, type, personality, motto } = req.body;
+
     if (await CharacterService.checkIfExists(collection, name.value)) {
       res.statusCode = 409;
 
@@ -30,21 +29,29 @@ async function routes(fastify, options) {
 
     // upload and save the file
     await pump(
-      avatar.file,
-      fs.createWriteStream(`./uploads/${avatar.filename}`)
+      req.body.avatar.toBuffer(),
+      fs.createWriteStream(`./uploads/${req.body.avatar.filename}`)
     );
 
     res.statusCode = 201;
 
-    return await CharacterService.createCharacter(collection, {
-      avatar: `/static/${avatar.filename}`,
-      name: name.value,
-      sex: sex.value,
-      realm: realm.value,
-      type: type.value,
-      personality: personality.value,
-      motto: motto.value,
-    });
+    // Must change /static/${req.body.avatar.filename} for uuid or something
+    try {
+      await CharacterService.createCharacter(collection, {
+        avatar: `/static/${req.body.avatar.filename}`,
+        name: name.value,
+        sex: sex.value,
+        realm: realm.value,
+        type: type.value,
+        personality: personality.value,
+        motto: motto.value,
+      });
+
+      return { status: "Successfully created" };
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
   });
 
   /**

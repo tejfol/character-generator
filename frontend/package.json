@@ -14,5 +14,7 @@
     "@types/node": "^18.16.19",
     "nuxt": "^3.6.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "nuxt-icons": "^3.2.1"
+  }
 }
