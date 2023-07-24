@@ -6,23 +6,23 @@ import { pipeline } from "stream";
 
 const pump = util.promisify(pipeline);
 
-async function routes(fastify, options) {
+async function characterRouters(fastify) {
   const collection = fastify.mongo.db.collection("characters");
 
-  //✦ Get all the created characters
+  //✦ Get the list of characters
+  // TODO: With pagination
   fastify.get("/", async (req, res) => {
     return await CharacterService.getAllCharacters(collection);
   });
 
   /**
    * ✦ Create a character
-   *
    */
-  fastify.post("/create", async (req, res) => {
+  fastify.post("/", async (req, res) => {
     const { name, sex, realm, type, personality, motto } = req.body;
 
     if (await CharacterService.checkIfExists(collection, name.value)) {
-      res.statusCode = 409;
+      res.statusCode = 404;
 
       throw new Error("Character with this name already exists.");
     }
@@ -50,7 +50,7 @@ async function routes(fastify, options) {
       return { status: "Successfully created" };
     } catch (error) {
       console.error(error);
-      return error;
+      return { error };
     }
   });
 
@@ -58,7 +58,7 @@ async function routes(fastify, options) {
    * ✦ Create a character
    *
    */
-  fastify.delete("/character/:id", async (req, res) => {
+  fastify.delete("/:id", async (req, res) => {
     const { id } = req.params;
 
     console.log(`delete with id: ${id}`);
@@ -71,6 +71,8 @@ async function routes(fastify, options) {
 
     res.send({ "Successfully delete": id });
   });
+
+  fastify.log.info("Character routes registered.");
 }
 
-export default routes;
+export default characterRouters;

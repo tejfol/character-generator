@@ -1,11 +1,7 @@
 import fastifyPlugin from "fastify-plugin";
 import fastifyMongo from "@fastify/mongodb";
 
-/**
- * @param {FastifyInstance} fastify
- * @param {Object} options
- */
-async function dbConnector(fastify, options) {
+async function dbConnector(fastify) {
   // Setup the mongodb connection
   fastify.register(fastifyMongo, {
     // force to close the mongodb connection when app stopped
@@ -14,6 +10,8 @@ async function dbConnector(fastify, options) {
 
     url: fastify.config.MONGO_URL,
   });
+
+  fastify.log.info("Connected to database.");
 }
 
 export default fastifyPlugin(dbConnector);

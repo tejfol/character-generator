@@ -1,7 +1,7 @@
 import Fastify from "fastify";
 import fastifyEnv from "@fastify/env";
 
-import router from "./router/index.js";
+import characterRouters from "./router/index.js";
 
 import { options } from "./config/config.js";
 import dbConnector from "./config/db-connector.js";
@@ -12,7 +12,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const fastify = Fastify({
-  logger: true,
+  logger: {
+    transport: {
+      target: "pino-pretty",
+      options: {
+        colorize: true,
+      },
+    },
+  },
 });
 
 // Register dotenv
@@ -50,7 +57,7 @@ fastify.register(import("@fastify/multipart"), {
   },
 });
 fastify.register(dbConnector);
-fastify.register(router);
+fastify.register(characterRouters, { prefix: "/api/character" });
 
 /**
  * Run the server!

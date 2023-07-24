@@ -1,8 +1,9 @@
 import { ObjectId } from "@fastify/mongodb";
 
 class CharacterService {
-  static async getAllCharacters(collection) {
-    const results = (await collection.find().toArray()) || [];
+  static async getAllCharacters(collection, options = {}) {
+    const results =
+      (await collection.find().sort({ createdAt: -1 }).toArray()) || {};
 
     return { list: results };
   }
@@ -20,7 +21,11 @@ class CharacterService {
    * @returns {Promise} Created and inserted Character object to database.
    */
   static async createCharacter(collection, payload) {
-    return await collection.insertOne(payload);
+    return await collection.insertOne({
+      ...payload,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   /**

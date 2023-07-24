@@ -3,10 +3,12 @@ const {
   data: characters,
   execute,
   pending,
-} = await useFetch("http://localhost:3000/");
+} = await useFetch("http://localhost:3000/api/character/");
 
 const deleteCharacter = async (id) => {
-  await useFetch(`http://localhost:3000/character/${id}`, { method: "DELETE" });
+  await useFetch(`http://localhost:3000/api/character/${id}`, {
+    method: "DELETE",
+  });
 
   execute();
 };
