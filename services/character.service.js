@@ -2,10 +2,9 @@ import { ObjectId } from "@fastify/mongodb";
 
 class CharacterService {
   static async getAllCharacters(collection, options = {}) {
-    const results =
-      (await collection.find().sort({ createdAt: -1 }).toArray()) || {};
-
-    return { list: results };
+    return {
+      list: (await collection.find().sort({ createdAt: -1 }).toArray()) || [],
+    };
   }
 
   /**
@@ -42,6 +41,12 @@ class CharacterService {
    */
   static async deleteCharacter(collection, id) {
     return await collection.deleteOne({
+      _id: new ObjectId(id),
+    });
+  }
+
+  static async getCharacter(collection, id) {
+    return await collection.findOne({
       _id: new ObjectId(id),
     });
   }

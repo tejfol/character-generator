@@ -1,4 +1,6 @@
 <script setup>
+import MasonryWall from "@yeger/vue-masonry-wall";
+
 const {
   data: characters,
   execute,
@@ -15,59 +17,81 @@ const deleteCharacter = async (id) => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto">
-    <div v-if="characters" class="px-4 sm:px-8 py-4 text-white">
-      <ul
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
+  <div class="max-w-7xl mx-auto my-8 px-8">
+    <div v-if="characters && characters.length != 0" class="text-white">
+      <MasonryWall
+        :items="characters.list"
+        :ssr-columns="4"
+        :column-width="260"
+        :gap="0"
+      >
+        <template #default="{ item, index }">
+          <div
+            :style="{ height: `${item}px` }"
+            class="card flex flex-col overflow-hidden relative group"
+          >
+            <NuxtLink :to="`${item._id}`">
+              <img
+                draggable="false"
+                width="400"
+                height="400"
+                class="transition-all ease-in-out aspect-auto object-cover w-full group-hover:scale-110"
+                :src="`http://localhost:3000${item.avatar}`"
+                alt="_"
+              />
+            </NuxtLink>
+            <div
+              class="transition-all duration-300 absolute -bottom-full h-fit flex flex-col py-2 px-4 text-center gap-2 w-full group-hover:bottom-0 group-hover:bg-black/70"
+            >
+              <p class="font-bold text-3xl">{{ item.name }}</p>
+              <button
+                type="button"
+                class="ml-auto mb-2"
+                @click="deleteCharacter(item._id)"
+              >
+                <nuxt-icon class="text-2xl" name="delete" filled />
+              </button>
+            </div>
+          </div>
+        </template>
+      </MasonryWall>
+
+      <!-- <ul
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
       >
         <li
           v-for="character in characters.list"
-          :key="character.id"
-          class="flex flex-col h-fit border rounded-xl"
+          :key="character._id"
+          class="flex flex-col h-fit border rounded-xl overflow-hidden relative group"
         >
-          <img
-            width="400"
-            height="400"
-            class="aspect-auto object-cover w-full xl:max-h-[75vh]"
-            :src="`http://localhost:3000${character.avatar}`"
-            alt="_"
-          />
+          <NuxtLink :to="`${character._id}`">
+            <img
+              draggable="false"
+              width="400"
+              height="400"
+              class="aspect-auto object-cover w-full"
+              :src="`http://localhost:3000${character.avatar}`"
+              alt="_"
+            />
+          </NuxtLink>
           <div
-            class="flex flex-col py-2 px-4 text-center gap-2 h-fit h-full w-full"
+            class="transition-all duration-300 absolute -bottom-full h-fit flex flex-col py-2 px-4 text-center gap-2 w-full group-hover:bottom-0 group-hover:bg-black/70"
           >
-            <p class="font-bold">{{ character.name }}</p>
+            <p class="font-bold text-3xl">{{ character.name }}</p>
             <button
               type="button"
-              class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg ml-auto text-sm px-3 py-1.5 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              class="ml-auto mb-2"
               @click="deleteCharacter(character._id)"
             >
-              Delete
+              <nuxt-icon class="text-2xl" name="delete" filled />
             </button>
-            <!-- <p>
-            <span class="font-bold">Sex:</span> {{ character.sex || "-----" }}
-          </p>
-          <p>
-            <span class="font-bold">Realm:</span>
-            {{ character.realm || "-----" }}
-          </p>
-          <p>
-            <span class="font-bold">type:</span> {{ character.type || "-----" }}
-          </p>
-          <p>
-            <span class="font-bold">personality:</span>
-            {{ character.personality || "-----" }}
-          </p>
-          <p>
-            <span class="font-bold">motto:</span>
-            {{ character.motto || "-----" }}
-          </p> -->
           </div>
         </li>
-      </ul>
+      </ul> -->
     </div>
-    <div v-else class="flex flex-col my-12">
+    <div v-else class="flex flex-col">
       <nuxt-icon class="text-7xl mx-auto w-fit" filled name="not-found" />
-      <h2 class="text-center text-white text-2xl">No available characters</h2>
+      <h2 class="text-center text-white text-2xl">No available character</h2>
     </div>
   </div>
 </template>

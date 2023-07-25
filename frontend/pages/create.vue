@@ -1,8 +1,33 @@
+<script setup>
+const image = ref("");
+const name = ref("");
+const sex = ref("");
+const realm = ref("");
+const type = ref("");
+const personality = ref("");
+const motto = ref("");
+
+const onSelectFile = (e) => {
+  const files = e.currentTarget.files;
+
+  if (files && files[0]) {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      image.value = e.target.result;
+    };
+
+    reader.readAsDataURL(files[0]);
+  }
+};
+</script>
+
 <template>
-  <div class="mx-auto max-w-7xl">
-    <form class="grid grid-cols-2 gap-8">
+  <div class="mx-auto max-w-7xl p-4 lg:p-8">
+    <form class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div
-        class="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-36"
+        :style="{ 'background-image': `url(${image})` }"
+        class="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-36 bg-contain bg-no-repeat bg-center"
       >
         <div class="text-center">
           <svg
@@ -24,6 +49,7 @@
             >
               <span>Upload a file</span>
               <input
+                @input="onSelectFile"
                 id="file-upload"
                 name="file-upload"
                 type="file"
@@ -39,9 +65,7 @@
       </div>
       <div class="text-white font-medium">
         <div class="sm:col-span-3">
-          <label
-            for="first-name"
-            class="block text-sm font-medium leading-6 text-white"
+          <label for="first-name" class="block font-medium leading-6 text-white"
             >Full name</label
           >
           <div class="mt-2">

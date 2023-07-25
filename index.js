@@ -53,7 +53,7 @@ fastify.register(import("@fastify/multipart"), {
   attachFieldsToBody: true,
   limits: {
     fieldNameSize: 100, // Max field name size in bytes
-    fileSize: 1000000, // For multipart forms, the max file size in bytes
+    fileSize: 50000000, // For multipart forms, the max file size in bytes
   },
 });
 fastify.register(dbConnector);
