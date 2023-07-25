@@ -1,9 +1,14 @@
 import { ObjectId } from "@fastify/mongodb";
 
 class CharacterService {
-  static async getAllCharacters(collection, options = {}) {
+  static async getAllCharacters(collection, { limit }) {
     return {
-      list: (await collection.find().sort({ createdAt: -1 }).toArray()) || [],
+      list:
+        (await collection
+          .find()
+          .limit(limit)
+          .sort({ createdAt: -1 })
+          .toArray()) || [],
     };
   }
 

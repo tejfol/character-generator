@@ -1,5 +1,11 @@
 <script setup>
-const image = ref("");
+import { Form, Field } from "vee-validate";
+
+const {
+  public: { $api },
+} = useRuntimeConfig();
+
+const image = reactive({ mimetype: "", image: "" });
 const name = ref("");
 const sex = ref("");
 const realm = ref("");
@@ -14,22 +20,31 @@ const onSelectFile = (e) => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      image.value = e.target.result;
+      image.image = e.target.result;
     };
 
-    reader.readAsDataURL(files[0]);
+    image.mimetype = files[0].type.split("/")[1];
+
+    image.image = reader.readAsDataURL(files[0]);
   }
+};
+
+const onSubmit = async (values) => {
+  await useFetch(`${$api}/character`, {
+    method: "POST",
+    body: { avatar: image, ...values },
+  });
 };
 </script>
 
 <template>
   <div class="mx-auto max-w-7xl p-4 lg:p-8">
-    <form class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <Form @submit="onSubmit" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div
-        :style="{ 'background-image': `url(${image})` }"
+        :style="{ 'background-image': `url(${image.image})` }"
         class="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-36 bg-contain bg-no-repeat bg-center"
       >
-        <div class="text-center">
+        <div class="text-center my-auto">
           <svg
             class="mx-auto h-12 w-12 text-gray-500"
             viewBox="0 0 24 24"
@@ -44,14 +59,14 @@ const onSelectFile = (e) => {
           </svg>
           <div class="mt-4 flex text-sm leading-6 text-gray-400">
             <label
-              for="file-upload"
+              for="avatar"
               class="relative cursor-pointer rounded-md bg-gray-900 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-indigo-500"
             >
               <span>Upload a file</span>
               <input
                 @input="onSelectFile"
-                id="file-upload"
-                name="file-upload"
+                id="avatar"
+                name="avatar"
                 type="file"
                 class="sr-only"
               />
@@ -63,21 +78,97 @@ const onSelectFile = (e) => {
           </p>
         </div>
       </div>
-      <div class="text-white font-medium">
+      <div class="text-white font-medium space-y-4">
         <div class="sm:col-span-3">
           <label for="first-name" class="block font-medium leading-6 text-white"
-            >Full name</label
+            >Name</label
           >
           <div class="mt-2">
-            <input
+            <Field
               type="text"
-              name="first-name"
-              id="first-name"
-              autocomplete="given-name"
+              name="name"
+              id="name"
+              v-model="name"
               class="block w-full rounded-md border-0 bg-white/5 py-1.5 px-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
             />
           </div>
         </div>
+
+        <div class="sm:col-span-3">
+          <label for="first-name" class="block font-medium leading-6 text-white"
+            >Sex</label
+          >
+          <div class="mt-2">
+            <Field
+              type="text"
+              name="sex"
+              id="sex"
+              v-model="sex"
+              class="block w-full rounded-md border-0 bg-white/5 py-1.5 px-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+
+        <div class="sm:col-span-3">
+          <label for="first-name" class="block font-medium leading-6 text-white"
+            >Realm</label
+          >
+          <div class="mt-2">
+            <Field
+              type="text"
+              name="realm"
+              id="realm"
+              v-model="realm"
+              class="block w-full rounded-md border-0 bg-white/5 py-1.5 px-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+
+        <div class="sm:col-span-3">
+          <label for="first-name" class="block font-medium leading-6 text-white"
+            >Type</label
+          >
+          <div class="mt-2">
+            <Field
+              type="text"
+              name="type"
+              id="type"
+              v-model="type"
+              class="block w-full rounded-md border-0 bg-white/5 py-1.5 px-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+
+        <div class="sm:col-span-3">
+          <label for="first-name" class="block font-medium leading-6 text-white"
+            >Personality</label
+          >
+          <div class="mt-2">
+            <Field
+              type="text"
+              name="personality"
+              id="personality"
+              v-model="personality"
+              class="block w-full rounded-md border-0 bg-white/5 py-1.5 px-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+
+        <div class="sm:col-span-3">
+          <label for="first-name" class="block font-medium leading-6 text-white"
+            >Motto</label
+          >
+          <div class="mt-2">
+            <Field
+              type="text"
+              name="motto"
+              id="motto"
+              v-model="motto"
+              class="block w-full rounded-md border-0 bg-white/5 py-1.5 px-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+
         <button
           type="submit"
           class="block rounded-md bg-indigo-500 px-5 py-2 mt-4 ml-auto w-fit font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
@@ -85,6 +176,6 @@ const onSelectFile = (e) => {
           Save
         </button>
       </div>
-    </form>
+    </Form>
   </div>
 </template>

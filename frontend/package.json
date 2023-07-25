@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --port=4547",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -15,10 +15,13 @@
     "nuxt": "^3.6.2"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.14",
+    "@heroicons/vue": "^2.0.18",
     "@nuxtjs/fontaine": "^0.4.0",
     "@yeger/vue-masonry-wall": "^4.1.0",
     "add": "^2.0.6",
     "nuxt-icons": "^3.2.1",
+    "vee-validate": "^4.10.8",
     "yarn": "^1.22.19"
   }
 }

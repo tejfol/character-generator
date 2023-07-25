@@ -2,7 +2,7 @@
 const route = useRoute();
 
 const {
-  public: { $api },
+  public: { $static, $api },
 } = useRuntimeConfig();
 
 const { data } = await useFetch(`${$api}/character/${route.params.id}`, {
@@ -15,7 +15,7 @@ const { data } = await useFetch(`${$api}/character/${route.params.id}`, {
     <div class="flex gap-12">
       <img
         class="w-96 object-cover rounded"
-        :src="`http://localhost:3000${data.avatar}`"
+        :src="`${$static}/${data.avatar}`"
         alt=""
       />
       <div class="flex flex-col gap-2">

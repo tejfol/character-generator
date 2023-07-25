@@ -1,5 +1,5 @@
 <template>
-  <div class="text-2xl">
+  <div>
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -8,11 +8,10 @@
 
 <style>
 :root {
-  font-family: "Amatic SC";
+  font-family: "Handjet", sans-serif;
 }
 
 html {
   background-color: #1e1e1e;
-  font-family: "Amatic SC", sans-serif;
 }
 </style>

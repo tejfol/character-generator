@@ -1,10 +1,8 @@
 import CharacterService from "../services/character.service.js";
 
 import fs from "fs";
-import util from "util";
-import { pipeline } from "stream";
 
-const pump = util.promisify(pipeline);
+import base64Img from "base64-img";
 
 async function characterRouters(fastify) {
   const collection = fastify.mongo.db.collection("characters");
@@ -12,7 +10,11 @@ async function characterRouters(fastify) {
   //✦ Get the list of characters
   // TODO: With pagination
   fastify.get("/", async (req, res) => {
-    return await CharacterService.getAllCharacters(collection);
+    const { limit } = req.query;
+
+    return await CharacterService.getAllCharacters(collection, {
+      limit: parseInt(limit),
+    });
   });
 
   fastify.get("/:id", async (req, res) => {
@@ -28,27 +30,25 @@ async function characterRouters(fastify) {
   /**
    * ✦ Create a character
    */
-  fastify.post("/create", async (req, res) => {
+  fastify.post("/", async (req, res) => {
     const { avatar, name, sex, realm, type, personality, motto } = req.body;
 
-    if (await CharacterService.checkIfExists(collection, name.value)) {
+    if (await CharacterService.checkIfExists(collection, name)) {
       res.statusCode = 404;
 
       throw new Error("Character with this name already exists.");
     }
 
     // upload and save the file
-    await pump(
-      avatar.toBuffer(),
-      fs.createWriteStream(`./uploads/${avatar.filename}`)
-    );
 
-    res.statusCode = 201;
-
-    // Must change /static/${req.body.avatar.filename} for uuid or something
+    const filePath = new Promise((resolve, reject) => {
+      base64Img.img(avatar.image, "./uploads", Date.now(), (err, filepath) => {
+        resolve(filepath.split("/")[1]);
+      });
+    });
     try {
       await CharacterService.createCharacter(collection, {
-        avatar: `/static/${avatar.filename}`,
+        avatar: `${await filePath}`,
         name: name.value,
         sex: sex.value,
         realm: realm.value,
@@ -56,6 +56,8 @@ async function characterRouters(fastify) {
         personality: personality.value,
         motto: motto.value,
       });
+
+      res.statusCode = 201;
 
       return { status: "Successfully created" };
     } catch (error) {
